@@ -130,7 +130,7 @@ try {
 
 ![](https://github.com/xievxin/getuiGit/blob/master/images/ref05.png)
 
-发现ActiviyServices不支持夸进程传输。。
+发现ActiviyServices不支持跨进程传输。。
 
         
 
