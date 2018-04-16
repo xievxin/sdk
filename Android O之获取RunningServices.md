@@ -16,7 +16,7 @@ List<ActivityManager.RunningServiceInfo> infoList = manager.getRunningServices(I
 ![](https://github.com/xievxin/getuiGit/blob/master/images/WX20180416-180521.png)
         
 ## 方法二、adb命令
-我们知道`adb shell dumpsys activity services` 可以在控制台输出app的所有运行service，下面我们尝试在代码中执行这条命令，看下返回结果。
+我们知道`adb shell dumpsys activity services` 可以在控制台输出app的所有运行service信息，下面我们尝试在代码中执行这条命令，看下返回结果。
         
 ```Java
 BufferedReader reader = null;
@@ -39,6 +39,7 @@ try {
 ```
 接着在AndroidManifest.xml中添加权限
 ![](https://github.com/xievxin/getuiGit/blob/master/images/WX20180416-182018.png)
+
 输出结果如下：
 ```Java
 Permission Denial: can't dump ActivityManager from from pid=6038, uid=10087 due to missing android.permission.DUMP permission
@@ -49,7 +50,8 @@ Permission Denial: can't dump ActivityManager from from pid=6038, uid=10087 due 
 ![](https://github.com/xievxin/getuiGit/blob/master/images/ref01.png)
 ![](https://github.com/xievxin/getuiGit/blob/master/images/ref02.png)
 
-IActivityManager是一个aidl文件，getService（）拿到的实际是跟系统ActivityManagerService夸进程通信的BinderProxy，通过transact()到AMS进程IActivityManager.Stub中的onTransact()来最终调用到AMS的getServices()，如下：
+IActivityManager是一个aidl文件，getService（）拿到的实际是和系统ActivityManagerService跨进程通信的BinderProxy，通过transact()到AMS进程IActivityManager.Stub中的onTransact()来最终调用到AMS的getServices()，如下：
+
 ![](https://github.com/xievxin/getuiGit/blob/master/images/ref03.png)
 ![](https://github.com/xievxin/getuiGit/blob/master/images/ref04.png)
 
@@ -109,7 +111,8 @@ List<ActivityManager.RunningServiceInfo> getRunningServiceInfoLocked(int maxNum,
     }
 ```
         
-梳理一下，实际上AMS是一个装饰类，最终都是调用ActivityServices相关方法。
+        
+**梳理一下**，实际上AMS是一个装饰类，最终都是调用ActivityServices相关方法。
 我们可以在app中通过反射拿到BinderProxy，获取到mServices，然后继续反射执行mServices中的方法来避开权限验证，直接获取service列表。
 ```java
 ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -122,33 +125,13 @@ try {
         e.printStackTrace();
 }
 ```
+
 一切似乎都很美好，直到。。
+
 ![](https://github.com/xievxin/getuiGit/blob/master/images/ref05.png)
+
 发现ActiviyServices不支持夸进程传输。。
 
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+## 总结：三个方案全部没用。Google的代码写的真好。
