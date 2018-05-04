@@ -112,7 +112,7 @@ List<ActivityManager.RunningServiceInfo> getRunningServiceInfoLocked(int maxNum,
 ```
         
         
-**梳理一下**，实际上AMS是一个装饰类，最终都是调用ActivityServices相关方法。
+**梳理一下**，实际上AMS最终都是调用ActivityServices相关方法。
 我们可以在app中通过反射拿到BinderProxy，获取到mServices，然后继续反射执行mServices中的方法来避开权限验证，直接获取service列表。
 ```java
 ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
